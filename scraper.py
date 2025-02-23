@@ -12,11 +12,11 @@ logger.add("scraper.log",
           level="INFO")
 
 def scrape_table_data():
-    '''Scrape chemical product data from ChemicalBook'''
+    """Scrape chemical product data from ChemicalBook"""
     url = "https://www.chemicalbook.com/ChemicalProductProperty_DE_CB4116411.htm"
     headers = get_header()
     
-    logger.info(f"Starting scrape with headers: {headers['User-Agent']}")
+    logger.info(f"Starting scrape for ChemicalBook with headers: {headers['User-Agent']}")
     
     try:
         response = requests.get(url, headers=headers, timeout=10)
@@ -46,5 +46,41 @@ def scrape_table_data():
     except Exception as e:
         logger.exception(f"Unexpected error: {str(e)}")
 
+def scrape_quotes():
+    """Scrape quotes and authors from Quotes to Scrape"""
+    url = "http://quotes.toscrape.com/"
+    # headers = get_header()
+    
+    # logger.info(f"Starting scrape for Quotes to Scrape at URL: {url} with headers: {headers['User-Agent']}")
+    logger.info(f"Starting scrape for Quotes to Scrape at URL: {url} without headers")
+    
+    try:
+        response = requests.get(url, timeout=10)
+        response.raise_for_status()
+        if response.status_code == 200:
+            soup = BeautifulSoup(response.text, "html.parser")
+        else:
+            logger.warning(f"returned status code {response.status_code}")
+            return
+            
+        quotes = soup.find_all("div", class_="quote")
+
+        if quotes:
+            logger.success(f"Found {len(quotes)} quotes on the page")
+            
+            for quote in quotes:
+                text = quote.find("span", class_="text").get_text(strip=True)
+                author = quote.find("small", class_="author").get_text(strip=True)
+                logger.info(f"Quote: {text} - Author: {author}")
+        else:
+            logger.warning("No quotes found on the page")
+            
+    except requests.exceptions.RequestException as e:
+        logger.error(f"Request failed: {str(e)}")
+    except Exception as e:
+        logger.exception(f"Unexpected error: {str(e)}")
+
 if __name__ == "__main__":
+    # Call both scraping functions
     scrape_table_data()
+    scrape_quotes()
