@@ -1,0 +1,7 @@
+# requirements.txt
+loguru>=0.7.2  # Modern logging library
+requests>=2.31.0  # HTTP client for making requests
+beautifulsoup4>=4.12.3  # HTML parsing library
+
+# Optional but recommended for production
+python-slugify>=8.0.4  # For URL-safe strings (future-proofing)
