@@ -1,15 +1,8 @@
-# scraper_project/app-2.py
+# scraper_project/scraping_tasks/scraping_tasks.py
 import requests
 from bs4 import BeautifulSoup
 from loguru import logger
 from utils.util import get_header
-
-# Configure Loguru
-logger.add("scraper.log", 
-          rotation="500 MB",
-          retention="7 days",
-          enqueue=True,
-          level="INFO")
 
 def scrape_table_data(url):
     """Scrape chemical product data from ChemicalBook"""
@@ -47,9 +40,6 @@ def scrape_table_data(url):
 
 def scrape_quotes(url):
     """Scrape quotes and authors from Quotes to Scrape"""
-    # headers = get_header()
-    
-    # logger.info(f"Starting scrape for Quotes to Scrape at URL: {url} with headers: {headers['User-Agent']}")
     logger.info(f"Starting scrape for Quotes to Scrape at URL: {url} without headers")
     
     try:
@@ -74,12 +64,3 @@ def scrape_quotes(url):
         logger.error(f"Request failed: {str(e)}")
     except Exception as e:
         logger.exception(f"Unexpected error: {str(e)}")
-
-if __name__ == "__main__":
-    # URLs to scrape
-    chemicalbook_url = "https://www.chemicalbook.com/ChemicalProductProperty_DE_CB4116411.htm"
-    quotes_url = "http://quotes.toscrape.com/"
-    
-    # Call both scraping functions with URLs as parameters
-    scrape_table_data(chemicalbook_url)
-    scrape_quotes(quotes_url)
