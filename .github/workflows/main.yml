@@ -1,0 +1,26 @@
+name: Test Workflow
+on: [push]
+jobs: 
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v3
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with: 
+          python-version: '3.9'
+      - name: Install Dependencies
+        run: |
+          python -m install --upgrad pip
+          python -m install -r requirements.txt
+      - name: Run Script
+        run: python scraper.py
+      - name: Push Repo
+        run: |
+          git config user.name github-action
+          git config user.email github-action@whatever.com
+          git add .
+          git commit -m "github action commit"
+        
+          
