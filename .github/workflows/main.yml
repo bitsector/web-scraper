@@ -22,22 +22,21 @@ jobs:
           python3 -m pip install --upgrade pip
           python3 -m pip install -r requirements.txt
 
-      # Step 4: Install Flake8 (Linter)
-      - name: Install Flake8
-        run: python3 -m pip install flake8
+      # Step 4: Install Black (Linter)
+      - name: Install Black
+        run: python3 -m pip install black
 
-      # Step 5: Run Flake8 Linter and Capture Exit Code
-      - name: Run Flake8 Linter
-        id: flake8-lint
+      # Step 5: Run Black Linter (Dry Run)
+      - name: Run Black Linter
+        id: black-lint
         run: |
-          flake8 .
-          echo "Linting completed successfully!"
+          black --check .
         continue-on-error: true
 
       # Step 6: Check Linter Exit Code and Print Custom Messages
       - name: Check Linter Status
         run: |
-          if [ ${{ steps.flake8-lint.outcome }} == "failure" ]; then
+          if [ ${{ steps.black-lint.outcome }} == "failure" ]; then
             echo "Some linting errors were found."
             exit 1
           else
