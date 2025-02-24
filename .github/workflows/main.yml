@@ -1,26 +1,45 @@
-name: Test Workflow
+name: Custom Linter
+
 on: [push]
-jobs: 
-  build:
+
+jobs:
+  lint:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Repo
+      # Step 1: Checkout the repository
+      - name: Checkout Repository
         uses: actions/checkout@v3
+
+      # Step 2: Setup Python
       - name: Setup Python
         uses: actions/setup-python@v4
-        with: 
+        with:
           python-version: '3.9'
+
+      # Step 3: Install Dependencies
       - name: Install Dependencies
         run: |
-          python -m install --upgrad pip
-          python -m install -r requirements.txt
-      - name: Run Script
-        run: python scraper.py
-      - name: Push Repo
+          python3 -m pip install --upgrade pip
+          python3 -m pip install -r requirements.txt
+
+      # Step 4: Install Flake8 (Linter)
+      - name: Install Flake8
+        run: python3 -m pip install flake8
+
+      # Step 5: Run Flake8 Linter and Capture Exit Code
+      - name: Run Flake8 Linter
+        id: flake8-lint
         run: |
-          git config user.name github-action
-          git config user.email github-action@whatever.com
-          git add .
-          git commit -m "github action commit"
-        
-          
+          flake8 .
+          echo "Linting completed successfully!"
+        continue-on-error: true
+
+      # Step 6: Check Linter Exit Code and Print Custom Messages
+      - name: Check Linter Status
+        run: |
+          if [ ${{ steps.flake8-lint.outcome }} == "failure" ]; then
+            echo "Some linting errors were found."
+            exit 1
+          else
+            echo "Yay! Linting went perfectly."
+          fi
